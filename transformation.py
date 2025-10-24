@@ -29,11 +29,13 @@ class transformation:
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         return True
-    def rotation_manuelle(self, angle):
+    '''
+    def rotation_manuelle(self, angle,center):
         if self.image is None:
             return False
+        
         (h, w) = self.image.shape[:2]
-        center = (w // 2, h // 2)
+        #center = (w // 2, h // 2)
         # creatiom de la nouvelle image vide
         rotated = np.zeros_like(self.image)
         for i in range(h):
@@ -49,27 +51,30 @@ class transformation:
                 if 0 <= new_x < w and 0 <= new_y < h:
                     rotated[new_y, new_x] = self.image[i, j]
         self.image = rotated
-        return True
+        return True'''
     def rotation_manuelle_mapping(self, angle):
         if self.image is None:
             return False
         (h, w) = self.image.shape[:2]
         cx, cy = w // 2, h // 2
+        #cx , cy = centre[0],centre[1]
         rotated = np.zeros_like(self.image)
-        theta = np.radians(angle)
+        theta = np.radians(-angle)
         cos_t = np.cos(theta)
         sin_t = np.sin(theta)
         # inverse mapping : pour chaque pixel destination, trouver la source
-        for i in range(h):
-            for j in range(w):
-                xd = j
-                yd = i
-                xs = cx + cos_t * (xd - cx) + sin_t * (yd - cy)
-                ys = cy - sin_t * (xd - cx) + cos_t * (yd - cy)
-                xs_i = int(round(xs))
-                ys_i = int(round(ys))
-                if 0 <= xs_i < w and 0 <= ys_i < h:
-                    rotated[i, j] = self.image[ys_i, xs_i]
+        for x in range(h):
+            for y in range(w):
+                #xd = j
+                #yd = i
+                xs = int(round(cx + cos_t * (y - cx) + sin_t * (x - cy)))
+                ys =int(round( cy - sin_t * (y - cx) + cos_t * (x- cy)))
+                
+                #xs_i = int(round(xs))
+                #ys_i = int(round(ys))
+                # vérification des limites et assignation des pixels
+                if 0 <= xs < w and 0 <= ys < h:
+                    rotated[x, y] = self.image[ys, xs]
         self.image = rotated
         return True
     def rotation_opencv(self,angle):
@@ -78,23 +83,37 @@ class transformation:
         (h, w) = self.image.shape[:2]
         center = (w // 2, h // 2)
         M = cv2.getRotationMatrix2D(center, angle, 1.0)
-        rotated = cv2.warpAffine(self.image, M, (w, h))
-        self.image = rotated
+        self.last_comparatif = cv2.warpAffine(self.image, M, (w, h))
         return True
+    
+    def afficher_comparatif(self, titre1="Image original", titre2="Image manuelle",titre3="image opencv"):
+        if self.image is None or self.last_comparatif is None:
+            return False
+        if not self.show_windows:
+            return True
+        combined = np.hstack((self.original_image, self.image, self.last_comparatif))
+        cv2.imshow(f"{titre1} | {titre2} | {titre3}", combined)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        return True
+    
 def main():
     t = transformation()
     if not t.charger_image(r"C:\Users\DELL\Downloads\exemple.png"):
         print("Échec du chargement de l'image")
         return
     t.show_windows = True
-    t.afficher_image("Image Originale")
+    #t.afficher_image("Image Originale")
     # appliquer rotation sur la même instance (ne PAS recréer t)
+    t.rotation_opencv(90)
     t.rotation_manuelle_mapping(90)
+    
+    t.afficher_comparatif()
     #t.rotation_manuelle(90)
-    t.afficher_image("Image après rotation manuelle de 90 degrés")
-    t.rotation_manuelle_mapping(-90)
+    #t.afficher_image("Image après rotation manuelle de 90 degrés")
+    #t.rotation_manuelle_mapping(-90)
     #t.rotation_manuelle(-90)
-    t.afficher_image("Inverse rotation manuelle de -90 degrés")
+    #t.afficher_image("Inverse rotation manuelle de -90 degrés")
 
     #image=t.ima
 
