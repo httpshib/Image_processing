@@ -6,8 +6,8 @@ import numpy as np
 from conversion import conversion
 
 
-class ImageProcessingApp:
-    """Application de traitement d'images avec comparaison OpenCV vs Manuel"""
+class ConversionApp:
+  
     
     def __init__(self, root):
         self.root = root
@@ -30,7 +30,7 @@ class ImageProcessingApp:
         self.create_widgets()
     
     def create_widgets(self):
-        """Crée tous les widgets de l'interface principale"""
+      
         
         # ===== FRAME TITRE =====
         title_frame = tk.Frame(self.root, bg="#f8f9fa", pady=15, relief=tk.RAISED, borderwidth=1)
@@ -75,7 +75,7 @@ class ImageProcessingApp:
         )
         self.file_label.pack(side=tk.LEFT, padx=10)
         
-        # ===== FRAME MENU TRAITEMENTS =====
+       
         menu_frame = tk.Frame(self.root, bg="#f8f9fa", pady=20, relief=tk.GROOVE, borderwidth=2)
         menu_frame.pack(fill=tk.X, padx=20, pady=10)
         
@@ -98,11 +98,11 @@ class ImageProcessingApp:
             state="readonly"
         )
         self.treatment_combo['values'] = (
-            "🎨 Niveaux de Gris",
-            "⚫⚪ Binarisation",
-            "🔍 Zoom x2",
-            "🌈RGB TO HSV",
-            "🌈RGB To yCrCb"
+            "Niveaux de Gris",
+            "Binarisation",
+            "Zoom x2",
+            "RGB TO HSV",
+            "RGB To yCrCb"
         )
         self.treatment_combo.set("Sélectionner un traitement...")
         self.treatment_combo.pack(side=tk.LEFT, padx=10)
@@ -126,7 +126,7 @@ class ImageProcessingApp:
         # Bouton Restaurer
         btn_restore = tk.Button(
             menu_frame,
-            text="🔄 Restaurer Original",
+            text="Restaurer Original",
             command=self.restore_original,
             font=("Arial", 11, "bold"),
             bg="#e67e22",
@@ -172,13 +172,12 @@ class ImageProcessingApp:
             tags="placeholder"
         )
         
-        # ===== FRAME INFO =====
         info_frame = tk.Frame(self.root, bg="#f8f9fa", pady=10, relief=tk.FLAT)
         info_frame.pack(fill=tk.X, padx=20, pady=(0, 20))
         
         self.info_label = tk.Label(
             info_frame,
-            text="ℹ️ Astuce : Chargez une image puis sélectionnez un traitement dans la liste",
+            text="Astuce : Chargez une image puis sélectionnez un traitement dans la liste",
             font=("Arial", 10),
             bg="#f8f9fa",
             fg="#7f8c8d"
@@ -186,7 +185,7 @@ class ImageProcessingApp:
         self.info_label.pack()
     
     def load_image(self):
-        """Charge une image depuis le système de fichiers"""
+       
         file_path = filedialog.askopenfilename(
             title="Sélectionner une image",
             filetypes=[
@@ -213,7 +212,7 @@ class ImageProcessingApp:
             # Mettre à jour l'info
             h, w = self.converter.get_dimensions()[:2]
             self.info_label.config(
-                text=f"📊 Image chargée : {w}x{h} pixels",
+                text=f"Image chargée : {w}x{h} pixels",
                 fg="#27ae60"
             )
             
@@ -274,20 +273,20 @@ class ImageProcessingApp:
             )
             return
         
-        if treatment == "🎨 Niveaux de Gris":
+        if treatment == "Niveaux de Gris":
             self.apply_grayscale()
-        elif treatment == "⚫⚪ Binarisation":
+        elif treatment == "Binarisation":
             self.apply_binary()
-        elif treatment == "🔍 Zoom x2":
+        elif treatment == "Zoom x2":
             self.apply_zoom()
-        elif treatment == "🌈RGB TO HSV":
+        elif treatment == "RGB TO HSV":
             self.apply_RGB_to_HSV()
-        elif treatment == "🌈RGB To yCrCb":
+        elif treatment == "RGB To yCrCb":
             self.apply_RGB_to_YCbCr()
         
     
     def apply_grayscale(self):
-        """Applique la conversion en niveaux de gris"""
+       
         if not self.check_image_loaded():
             return
         
@@ -308,7 +307,7 @@ class ImageProcessingApp:
         self.show_results("Conversion en Niveaux de Gris")
     
     def apply_binary(self):
-        """Applique la binarisation"""
+        
         if not self.check_image_loaded():
             return
         
@@ -329,7 +328,7 @@ class ImageProcessingApp:
         self.show_results("Binarisation (Seuil = 127)")
     
     def apply_zoom(self):
-        """Applique un zoom x2"""
+       
         if not self.check_image_loaded():
             return
         
@@ -360,17 +359,17 @@ class ImageProcessingApp:
         self.show_results("Zoom x2 (Nearest Neighbor)")
     
     def restore_original(self):
-        """Restaure l'image originale"""
+       
         if not self.check_image_loaded():
             return
         
         self.converter.restaurer_original()
         self.display_preview()
-        self.info_label.config(text="✅ Image originale restaurée", fg="#27ae60")
+        self.info_label.config(text=" Image originale restaurée", fg="#27ae60")
         messagebox.showinfo("Restauration", "Image originale restaurée avec succès !")
     
     def show_results(self, treatment_name):
-        """Affiche les résultats dans une fenêtre séparée"""
+       
         
         # Fermer la fenêtre précédente si elle existe
         if self.result_window is not None:
@@ -438,7 +437,7 @@ class ImageProcessingApp:
         btn_close.pack(pady=(0, 20))
     
     def display_image_in_frame(self, parent, image, title, column, color):
-        """Affiche une image dans un frame avec titre"""
+        
         
         # Frame conteneur
         frame = tk.Frame(parent, bg="white", relief=tk.RIDGE, borderwidth=2)
@@ -476,7 +475,7 @@ class ImageProcessingApp:
         h, w = image.shape[:2]
         dim_label = tk.Label(
             frame,
-            text=f"📐 {w} x {h} pixels",
+            text=f" {w} x {h} pixels",
             font=("Arial", 9),
             bg="white",
             fg="#7f8c8d",
@@ -485,7 +484,7 @@ class ImageProcessingApp:
         dim_label.pack()
 
     def apply_RGB_to_HSV(self):
-        """Applique la conversion RGB vers HSV"""
+        
         if not self.check_image_loaded():
             return
         
@@ -504,7 +503,7 @@ class ImageProcessingApp:
         # Afficher les résultats
         self.show_results("Conversion RGB vers HSV")
     def apply_RGB_to_YCbCr(self):
-        """Applique la conversion RGB vers YCbCr"""
+       
         if not self.check_image_loaded():
             return
         
@@ -525,9 +524,9 @@ class ImageProcessingApp:
         self.show_results("Conversion RGB vers YCbCr")
 
 def main():
-    """Point d'entrée de l'application"""
+   
     root = tk.Tk()
-    app = ImageProcessingApp(root)
+    app = ConversionApp(root)
     root.mainloop()
 
 
